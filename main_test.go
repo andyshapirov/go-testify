@@ -18,10 +18,7 @@ func TestMainHandlerWhenRequestIsCorrect(t *testing.T) {
 	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
-	assert.Equal(t, http.StatusOK, responseRecorder.Code)
-
-	// require проставлен в третьем тесте - непосредственно перед манипуляциями с body
-	// здесь же NoEmpty требуется по заданию
+	require.Equal(t, http.StatusOK, responseRecorder.Code)
 	assert.NotEmpty(t, responseRecorder.Body)
 }
 
@@ -33,7 +30,7 @@ func TestMainHandlerWhenCityIsWrong(t *testing.T) {
 	handler := http.HandlerFunc(mainHandle)
 	handler.ServeHTTP(responseRecorder, req)
 
-	assert.Equal(t, http.StatusBadRequest, responseRecorder.Code)
+	require.Equal(t, http.StatusBadRequest, responseRecorder.Code)
 	require.NotEmpty(t, responseRecorder.Body)
 	assert.Equal(t, "wrong city value", responseRecorder.Body.String())
 }
@@ -51,6 +48,5 @@ func TestMainHandlerWhenCountMoreThanTotal(t *testing.T) {
 	require.NotEmpty(t, responseRecorder.Body)
 
 	cityList := strings.Split(responseRecorder.Body.String(), ",")
-	respCount := len(cityList)
-	assert.Equal(t, totalCount, respCount)
+	assert.Len(t, cityList, totalCount)
 }
